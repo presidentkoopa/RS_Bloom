@@ -1,0 +1,5 @@
+// RS_Bloom -- the thing that makes everything else glow.
+version "4.12"
+
+#include "zscript/rsb_presets.zs"
+#include "zscript/rsb_handler.zs"

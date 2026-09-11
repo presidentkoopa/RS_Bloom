@@ -1,0 +1,28 @@
+// RS_Bloom -- CVars
+//
+// WHY THIS MOD EXISTS.
+//
+// Bloom is what turns an over-bright pixel into a glow. Every emissive thing in
+// this family deliberately writes past 1.0 for exactly that reason -- the neon
+// core at 2.6, the white cores in the surface stamps, a wall of light at 2.6
+// intensity. None of that reads as LIGHT until bloom picks it up; without it
+// they are just pale pixels.
+//
+// The engine already had the controls, including this fork's own additions --
+// a lowerable threshold, a soft knee, anamorphic streaking, a bloom tint and
+// chromatic fringing. Not one of them appeared in any menu in this family, so
+// the single setting the whole lighting set depends on was whatever it happened
+// to be, adjustable only from the console.
+//
+// EVERY SLIDER HERE DRIVES AN ENGINE gl_bloom_* CVAR DIRECTLY. This mod adds no
+// render state of its own -- it is a menu and a set of presets for controls that
+// already existed. That is deliberate: bloom is global, one pass, shared by
+// every mod, and a second copy of it would be a second thing to keep in step.
+
+server bool rsb_enabled = true;
+server int  rsb_preset  = 2;
+
+// Internal. NOSAVE, not server -- see the same note in the sibling mods. A
+// server cvar is not written locally when set, so a latch read back next tic
+// still reads its old value and the preset re-applies forever.
+nosave int  rsb_preset_applied = -1;
