@@ -40,7 +40,12 @@ class RSB_ReactiveHandler : EventHandler
 	const FLASH_DECAY      = 0.86;  // per tic: about a third of a second to fade
 	const FLASH_GAIN       = 1.1;   // intensity x (1 + gain * flash)
 	const FLASH_DROP       = 0.30;  // threshold x (1 - drop * flash), so more blooms
-	const FLASH_WIDEN      = 0.5;   // spread + widen * flash
+	// spread + widen * flash. ZERO on purpose: with laser protection on
+	// (gl_bloom_pin_beams), a spread that differs from the pinned look while a
+	// beam is live costs a second bloom chain (~1-1.5 ms per eye,
+	// EMISSIVE_BLOOM_PLAN.md Plan C). Threshold, knee, tint and intensity stay in
+	// the cheap single chain (Plan B), so a flash surges through those instead.
+	const FLASH_WIDEN      = 0.0;
 	const EXPLOSION_WEIGHT = 1.0;   // radius damage went off
 	const IMPACT_WEIGHT    = 0.55;  // a projectile hit something
 	const LAUNCH_WEIGHT    = 0.30;  // a projectile left its shooter
