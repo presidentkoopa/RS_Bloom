@@ -3,7 +3,7 @@
 // (hw_postprocess.cpp), so they are as live as a slider gets -- but no push in
 // this mod can vouch for them, so they are named here.
 // LINT-LIVE: RSBManual RSBReactive
-// LINT-LIVE-OK: gl_bloom_threshold gl_bloom_knee gl_bloom_amount gl_bloom_anamorphic_ratio gl_bloom_chromatic gl_bloom_tint_r gl_bloom_tint_g gl_bloom_tint_b gl_exposure_scale gl_exposure_min gl_exposure_base gl_exposure_speed gl_bloom_override_strength gl_bloom_step
+// LINT-LIVE-OK: gl_bloom_threshold gl_bloom_knee gl_bloom_amount gl_bloom_anamorphic_ratio gl_bloom_chromatic gl_bloom_tint_r gl_bloom_tint_g gl_bloom_tint_b gl_exposure_scale gl_exposure_min gl_exposure_base gl_exposure_speed gl_bloom_override_strength gl_bloom_step gl_bloom_pin_beams
 
 OptionValue "RSB_Preset"
 {
@@ -44,13 +44,31 @@ OptionMenu "RSBMain"
 	Option "Preset", "rsb_preset", "RSB_Preset"
 	StaticText "Applied as soon as you pick it, while this page is", "gray"
 	StaticText "open. None changes nothing.", "gray"
-	StaticText "Every preset changes how the grab lasers and the", "gold"
-	StaticText "Lance glow -- they are tuned to Vanilla.", "gold"
+	StaticText "Presets change how the grab lasers and the Lance", "gold"
+	StaticText "glow, unless Keep legacy lasers (below) is on.", "gold"
 	Command "Re-apply preset", "rsb_preset_applied -1"
 	StaticText "Puts the preset's values back after tuning by hand.", "gray"
 	StaticText ""
 	Submenu "By hand", "RSBManual"
 	Submenu "Bloom that reacts", "RSBReactive"
+	StaticText ""
+	StaticText "LASERS", "white"
+	Option "Keep legacy lasers", "gl_bloom_pin_beams", "OnOff"
+	StaticText "On: grab lasers, the Lance, the Unmaker, the wheel", "gray"
+	StaticText "lines and beam tracers keep their own glow --", "gray"
+	StaticText "core, halo, the light on walls and in fog -- while", "gray"
+	StaticText "presets and reacting bloom change everything else.", "gray"
+	StaticText "Off: they glow with the rest. Flip it any time.", "gray"
+	StaticText "The first time it goes on, your bloom settings", "gold"
+	StaticText "at that moment become the laser look.", "gold"
+	StaticText "Anamorphic, Heavy and 70mm cost a little more", "gray"
+	StaticText "frame time while a laser is out with this on.", "gray"
+	StaticText "The VR laser sight is not a beam line: it still", "gray"
+	StaticText "follows presets.", "gray"
+	Command "Capture current bloom as the laser look", "gl_bloom_pin_capture"
+	StaticText "Makes the lasers keep whatever bloom looks like", "gray"
+	StaticText "right now. Set bloom how you want lasers first.", "gray"
+	Command "Laser look back to the engine defaults", "gl_bloom_pin_reset"
 }
 
 OptionMenu "RSBManual"
@@ -126,7 +144,7 @@ OptionMenu "RSBReactive"
 	StaticText ""
 	Option "Bloom that reacts", "rsb_reactive", "OnOff"
 	StaticText "Changes the grab laser and Lance glow while it", "gold"
-	StaticText "reacts, until laser exclusion lands.", "gold"
+	StaticText "reacts, unless Keep legacy lasers is on.", "gold"
 	StaticText ""
 	Slider "Strength", "gl_bloom_override_strength", 0.0, 1.0, 0.05, 2
 	StaticText "How much of every reaction shows. 0 is none. It", "gray"
@@ -144,8 +162,8 @@ OptionMenu "RSBReactive"
 	StaticText "Dims and cools while you take damage.", "gray"
 	Option "Follow the dark", "rsb_rx_dark", "OnOff"
 	StaticText "More bloom in dark rooms, less in bright ones.", "gray"
-	StaticText "Changes the laser glow all the time, until laser", "gold"
-	StaticText "exclusion lands.", "gold"
+	StaticText "Changes the laser glow all the time, unless Keep", "gold"
+	StaticText "legacy lasers is on.", "gold"
 }
 
 AddOptionMenu "OptionsMenu"
