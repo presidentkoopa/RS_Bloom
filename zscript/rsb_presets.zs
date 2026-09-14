@@ -120,6 +120,7 @@ class RSB_Presets
 		Lens(false, 3.0, 0.0);
 		Tint(1.0, 1.0, 1.0);
 		Exposure(1.3, 0.35, 0.35, 0.05);
+		F("gl_bloom_step", 1.0);
 	}
 
 	static void Apply(int idx)
