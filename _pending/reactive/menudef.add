@@ -2,7 +2,20 @@
 // 1. Lint lines at the top of menudef. Append to the existing lines:
 //      // LINT-LIVE: RSBManual RSBReactive
 //      // LINT-LIVE-OK: ... gl_bloom_override_strength
-//    The strength slider is an engine cvar the renderer reads every frame.
+//      and also  gl_bloom_step  on the LINT-LIVE-OK line.
+//    Both are engine cvars the renderer reads every frame.
+//
+// 1b. In OptionMenu "RSBManual", REPLACE the two Spread note lines
+//      StaticText "Blur radius -- how far the glow reaches from what", "gray"
+//      StaticText "made it. Past about 4 it stops getting wider.", "gray"
+//    with:
+//      StaticText "Blur radius -- how far the glow reaches from what", "gray"
+//      StaticText "made it. Past about 4 it stops getting wider", "gray"
+//      StaticText "unless Blur step (below) is raised.", "gray"
+//      Slider "Blur step", "gl_bloom_step", 1, 8, 1, 0
+//      StaticText "Lets a big Spread and the anamorphic streak keep", "gray"
+//      StaticText "widening. 1 is the classic blur. Higher costs", "gray"
+//      StaticText "frame time -- check the headset at 4.", "gray"
 //
 // 2. In OptionMenu "RSBMain", after  Submenu "By hand", "RSBManual" :
 //      Submenu "Bloom that reacts", "RSBReactive"

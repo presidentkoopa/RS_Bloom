@@ -21,6 +21,7 @@ This waits on the engine's `SetBloomOverride(spread, threshold, knee, tintR, tin
    - Add the lint names to the two existing lint lines at the top.
    - Add the Submenu row at the end of RSBMain.
    - Add the RSBReactive menu after RSBManual.
+4b. In `zscript/rsb_presets.zs` `Base()`, add `F("gl_bloom_step", 1.0);` after the Exposure line. The presets were tuned at the classic blur, and step is part of the neutral state every preset starts from.
 5. Pack to scratch, compile-check with the five glow pk3s, install, commit and push.
 6. Owner A/B with a grab laser and the Lance in view, in a dark room and a bright one:
    - Flash: rocket, barrel and shotgun.
@@ -28,6 +29,10 @@ This waits on the engine's `SetBloomOverride(spread, threshold, knee, tintR, tin
    - Breathe: a GitD alarm preset.
    - Sweep: fog tint on.
    - Dark.
+   - The main lane's list:
+     - gl_bloom_step at 1, 2 and 4 with anamorphic on: no dotted or doubled copies around a laser dot; note the frame time at 4.
+     - Breathe in step with a GitD alarm.
+     - The Strength slider moving live with the menu open.
 
 ## Defaults
 
