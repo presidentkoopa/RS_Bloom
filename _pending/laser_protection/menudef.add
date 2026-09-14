@@ -1,0 +1,50 @@
+// ============================================================================
+// RS_Bloom -- laser protection rows (engine E6b, EMISSIVE_BLOOM_PLAN.md).
+// PENDING: wire only at the main lane's E6b "done", with its final names.
+//
+// 1. Top of menudef, append to the existing LINT-LIVE-OK line:
+//      gl_bloom_pin_beams
+//
+// 2. In OptionMenu "RSBMain", REPLACE the two gold preset warning lines
+//      StaticText "Every preset changes how the grab lasers and the", "gold"
+//      StaticText "Lance glow -- they are tuned to Vanilla.", "gold"
+//    with:
+//      StaticText "Presets change how the grab lasers and the Lance", "gold"
+//      StaticText "glow, unless Keep legacy lasers (below) is on.", "gold"
+//
+// 3. In OptionMenu "RSBMain", after the last Submenu row, paste the block
+//    marked RSBMAIN ROWS below.
+//
+// 4. In OptionMenu "RSBReactive", REPLACE
+//      StaticText "Changes the grab laser and Lance glow while it", "gold"
+//      StaticText "reacts, until laser exclusion lands.", "gold"
+//    with:
+//      StaticText "Changes the grab laser and Lance glow while it", "gold"
+//      StaticText "reacts, unless Keep legacy lasers is on.", "gold"
+//    and REPLACE
+//      StaticText "Changes the laser glow all the time, until laser", "gold"
+//      StaticText "exclusion lands.", "gold"
+//    with:
+//      StaticText "Changes the laser glow all the time, unless Keep", "gold"
+//      StaticText "legacy lasers is on.", "gold"
+// ============================================================================
+
+// ---- RSBMAIN ROWS ----------------------------------------------------------
+	StaticText ""
+	StaticText "LASERS", "white"
+	Option "Keep legacy lasers", "gl_bloom_pin_beams", "OnOff"
+	StaticText "On: grab lasers, the Lance, the Unmaker, the wheel", "gray"
+	StaticText "lines and beam tracers keep their own glow --", "gray"
+	StaticText "core, halo, the light on walls and in fog -- while", "gray"
+	StaticText "presets and reacting bloom change everything else.", "gray"
+	StaticText "Off: they glow with the rest. Flip it any time.", "gray"
+	StaticText "The first time it goes on, your bloom settings", "gold"
+	StaticText "at that moment become the laser look.", "gold"
+	StaticText "Anamorphic, Heavy and 70mm cost a little more", "gray"
+	StaticText "frame time while a laser is out with this on.", "gray"
+	StaticText "The VR laser sight is not a beam line: it still", "gray"
+	StaticText "follows presets.", "gray"
+	Command "Capture current bloom as the laser look", "gl_bloom_pin_capture"
+	StaticText "Makes the lasers keep whatever bloom looks like", "gray"
+	StaticText "right now. Set bloom how you want lasers first.", "gray"
+	Command "Laser look back to the engine defaults", "gl_bloom_pin_reset"
