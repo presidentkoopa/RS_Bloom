@@ -14,15 +14,24 @@
 // the single setting the whole lighting set depends on was whatever it happened
 // to be, adjustable only from the console.
 //
-// EVERY SLIDER HERE DRIVES AN ENGINE gl_bloom_* CVAR DIRECTLY. This mod adds no
-// render state of its own -- it is a menu and a set of presets for controls that
-// already existed. That is deliberate: bloom is global, one pass, shared by
-// every mod, and a second copy of it would be a second thing to keep in step.
+// EVERY SLIDER HERE DRIVES AN ENGINE gl_bloom_* / gl_exposure_* CVAR DIRECTLY.
+// This mod adds no render state of its own -- it is a menu and a set of presets
+// for controls that already existed. That is deliberate: bloom is global, one
+// pass, shared by every mod, and a second copy of it would be a second thing to
+// keep in step.
+//
+// NOSAVE, ALL THREE. These are this machine's display preferences, like the
+// gl_bloom_* cvars they drive. As server cvars they rode along in savegames, so
+// loading a save made under another preset changed rsb_preset and stamped that
+// preset over the player's own bloom settings.
 
-server bool rsb_enabled = true;
-server int  rsb_preset  = 2;
+nosave bool rsb_enabled = true;
+// -1 = None: leave bloom as it is. Any preset changes the grab laser and Lance
+// glow (they are tuned to the engine's threshold), so nothing applies until a
+// preset is picked.
+nosave int  rsb_preset  = -1;
 
-// Internal. NOSAVE, not server -- see the same note in the sibling mods. A
-// server cvar is not written locally when set, so a latch read back next tic
-// still reads its old value and the preset re-applies forever.
+// Internal: the preset last applied, so it only re-applies when it changes. The
+// "Re-apply preset" row sets this to -1 to stamp the current preset again after
+// tuning by hand.
 nosave int  rsb_preset_applied = -1;

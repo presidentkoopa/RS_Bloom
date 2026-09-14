@@ -1,5 +1,4 @@
-// Without this the handler never registers and nothing happens at all.
-GameInfo
-{
-	AddEventHandlers = "RSB_Handler"
-}
+// RS_Bloom registers no event handler. Presets are applied by the Bloom menu's
+// own tick (zscript/rsb_menu.zs), because the engine refuses script writes to its
+// gl_bloom_* cvars from anything that is not menu code -- the handler that used
+// to live here aborted the VM on every map load.

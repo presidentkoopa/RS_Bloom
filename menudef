@@ -1,5 +1,13 @@
+// menu_lint (tools\menu_lint.py): the "By hand" page must move bloom while it
+// is open. Every slider on it is an ENGINE cvar the renderer reads each frame
+// (hw_postprocess.cpp), so they are as live as a slider gets -- but no push in
+// this mod can vouch for them, so they are named here.
+// LINT-LIVE: RSBManual
+// LINT-LIVE-OK: gl_bloom_threshold gl_bloom_knee gl_bloom_amount gl_bloom_anamorphic_ratio gl_bloom_chromatic gl_bloom_tint_r gl_bloom_tint_g gl_bloom_tint_b gl_exposure_scale gl_exposure_min gl_exposure_base gl_exposure_speed
+
 OptionValue "RSB_Preset"
 {
+	-1, "None -- leave bloom as it is"
 	0, "Off"
 	1, "Vanilla -- the engine defaults"
 	2, "Emissive -- for the glow family"
@@ -9,10 +17,18 @@ OptionValue "RSB_Preset"
 	6, "Cold grade"
 	7, "Furnace"
 	8, "70mm -- dirty optics"
+	9, "Neon -- for GlowInTheDark cores"
+	10, "Fog glow -- soft, for lit mist"
+	11, "VR clean -- no streaks or fringing"
 }
 
 OptionMenu "RSBMain"
 {
+	// The preset is applied from THIS menu's own tick (RSB_BloomMenu). The
+	// engine only lets script write engine cvars from menu code, and the old
+	// event handler was refused on every map load -- which is why no preset
+	// ever applied.
+	Class "RSB_BloomMenu"
 	Title "Bloom"
 	StaticText "Bloom is what turns an over-bright pixel into a", "gray"
 	StaticText "GLOW. Everything emissive in this family writes", "gray"
@@ -21,11 +37,17 @@ OptionMenu "RSBMain"
 	StaticText "None of it reads as light until bloom picks it up.", "gray"
 	StaticText ""
 	Option "Use these settings", "rsb_enabled", "OnOff"
-	StaticText "Off hands bloom back to whatever you had set. It", "gray"
-	StaticText "does not force it dark -- this mod does not own", "gray"
-	StaticText "gl_bloom, it only offers to set it.", "gray"
+	StaticText "Off stops presets from changing bloom. Whatever", "gray"
+	StaticText "bloom is set to right now stays as it is -- this", "gray"
+	StaticText "mod does not keep a copy of your old settings.", "gray"
 	StaticText ""
 	Option "Preset", "rsb_preset", "RSB_Preset"
+	StaticText "Applied as soon as you pick it, while this page is", "gray"
+	StaticText "open. None changes nothing.", "gray"
+	StaticText "Every preset changes how the grab lasers and the", "gold"
+	StaticText "Lance glow -- they are tuned to Vanilla.", "gold"
+	Command "Re-apply preset", "rsb_preset_applied -1"
+	StaticText "Puts the preset's values back after tuning by hand.", "gray"
 	StaticText ""
 	Submenu "By hand", "RSBManual"
 }
@@ -41,32 +63,28 @@ OptionMenu "RSBManual"
 	StaticText ""
 	Slider "Threshold", "gl_bloom_threshold", 0.05, 4.0, 0.01, 2
 	StaticText "How bright a pixel must be before it blooms at", "gold"
-	StaticText "all. The engine default is 1.00 -- ONLY pixels", "gold"
-	StaticText "that already blew past full white. Right for a", "gold"
-	StaticText "muzzle flash, wrong for anything trying to read", "gold"
-	StaticText "as emissive at a sane brightness, which is most", "gold"
-	StaticText "of what this family draws. Around 0.6 is where", "gold"
-	StaticText "glow lanes and neon start to carry.", "gold"
+	StaticText "all, measured AFTER exposure (below) has scaled", "gold"
+	StaticText "the scene -- so in a dark room pixels well under", "gold"
+	StaticText "full white can already bloom at 1.00. Around 0.6", "gold"
+	StaticText "is where glow lanes and neon start to carry.", "gold"
 	StaticText ""
 	Slider "Soft knee", "gl_bloom_knee", 0.0, 8.0, 0.05, 2
-	StaticText "How sharply it crosses that line. 0 is a hard", "gray"
-	StaticText "cutoff, and a hard cutoff makes things POP in and", "gray"
-	StaticText "out of blooming as they cross it -- constant and", "gray"
-	StaticText "obvious when a glow is pulsing or a band is", "gray"
-	StaticText "sweeping. Higher eases it in.", "gray"
+	StaticText "How gently it crosses that line. 0 is a hard", "gray"
+	StaticText "cutoff, which makes pulsing glows pop in and out.", "gray"
+	StaticText "KEEP IT AT OR BELOW THE THRESHOLD: above it, even", "gold"
+	StaticText "black pixels bloom and the whole screen goes grey.", "gold"
 	StaticText ""
 	Slider "Spread", "gl_bloom_amount", 0.1, 6.0, 0.05, 2
 	StaticText "Blur radius -- how far the glow reaches from what", "gray"
-	StaticText "made it.", "gray"
+	StaticText "made it. Past about 4 it stops getting wider.", "gray"
 	StaticText ""
 	StaticText "LENS", "white"
 	Option "Anamorphic streaks", "gl_bloom_anamorphic", "OnOff"
 	Slider "  How sideways", "gl_bloom_anamorphic_ratio", 1.0, 16.0, 0.25, 2
 	StaticText "Blurs wider horizontally than vertically, so", "gray"
 	StaticText "bright things streak sideways the way they do", "gray"
-	StaticText "through an anamorphic lens. Free -- the blur is", "gray"
-	StaticText "already two passes and this only gives them", "gray"
-	StaticText "different amounts.", "gray"
+	StaticText "through an anamorphic lens. The streak stops", "gray"
+	StaticText "growing once Spread times this passes about 4.", "gray"
 	StaticText ""
 	Slider "Chromatic fringing", "gl_bloom_chromatic", 0.0, 0.1, 0.002, 3
 	StaticText "Offsets the colour channels radially, so bright", "gray"
@@ -79,12 +97,15 @@ OptionMenu "RSBManual"
 	Slider "Green", "gl_bloom_tint_g", 0.0, 2.0, 0.02, 2
 	Slider "Blue", "gl_bloom_tint_b", 0.0, 2.0, 0.02, 2
 	StaticText ""
-	StaticText "EXPOSURE -- the auto-brightness the bloom pass", "white"
-	StaticText "feeds. Affects the whole image, not just glow.", "white"
-	Slider "Scale", "gl_exposure_scale", 0.0, 4.0, 0.05, 2
-	Slider "Minimum", "gl_exposure_min", 0.0, 2.0, 0.05, 2
-	Slider "Base", "gl_exposure_base", 0.0, 2.0, 0.05, 2
+	StaticText "EXPOSURE -- how bright the scene reads to the", "white"
+	StaticText "bloom pass. It changes only what blooms, not the", "white"
+	StaticText "image itself, and does nothing with bloom off.", "white"
+	Slider "Scale", "gl_exposure_scale", 0.05, 4.0, 0.05, 2
+	Slider "Minimum", "gl_exposure_min", 0.05, 2.0, 0.05, 2
+	Slider "Base", "gl_exposure_base", 0.05, 2.0, 0.05, 2
 	Slider "Adapt speed", "gl_exposure_speed", 0.0, 1.0, 0.01, 2
+	StaticText "Scale, Minimum and Base stop above 0: at 0 the", "gray"
+	StaticText "exposure divides by zero and the screen breaks up.", "gray"
 }
 
 AddOptionMenu "OptionsMenu"
